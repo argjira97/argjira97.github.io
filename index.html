@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Event Countdown</title>
+  <title>Custom Event Countdown</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -16,14 +16,31 @@
   </style>
 </head>
 <body>
-  <h1>Event Countdown</h1>
+  <h1>Custom Event Countdown</h1>
+  <label for="event-date">Enter the date of your event:</label>
+  <input type="datetime-local" id="event-date" name="event-date">
+  <button onclick="startCountdown()">Start Countdown</button>
   <div id="countdown"></div>
 
   <script>
-    // Set the date of the event (year, month (0-indexed), day, hour, minute, second)
-    const eventDate = new Date('2024-12-31T00:00:00');
+    let countdownInterval;
 
-    function updateCountdown() {
+    function startCountdown() {
+      const eventDateString = document.getElementById('event-date').value;
+      const eventDate = new Date(eventDateString);
+      const now = new Date().getTime();
+
+      if (eventDate.getTime() <= now) {
+        alert('Please select a future date for your event.');
+        return;
+      }
+
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(updateCountdown, 1000, eventDate);
+      updateCountdown(eventDate);
+    }
+
+    function updateCountdown(eventDate) {
       const now = new Date().getTime();
       const distance = eventDate - now;
 
@@ -36,15 +53,10 @@
 
       // If the countdown is over, display a message
       if (distance < 0) {
+        clearInterval(countdownInterval);
         document.getElementById('countdown').innerHTML = 'The event has already occurred!';
       }
     }
-
-    // Update the countdown every second
-    setInterval(updateCountdown, 1000);
-
-    // Initial call to update the countdown
-    updateCountdown();
   </script>
 </body>
 </html>
